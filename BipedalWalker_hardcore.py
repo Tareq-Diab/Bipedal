@@ -149,10 +149,10 @@ class DQN_AGENT:
 
 
 
-env=gym.make('BipedalWalkerHardcore-v2')
+env=gym.make('BipedalWalkerHardcore-v3')
 def trymodel(r_train,episode):
     result=[]
-    env=gym.make('BipedalWalkerHardcore-v2')
+    env=gym.make('BipedalWalkerHardcore-v3')
     agent_test=DQN_AGENT(env.observation_space.shape[0],36,reply_memory=0,epsilon=0)# 6 is the number of the dicrite action i chose 
     #agent_test.load("rlmodels/BipedalWalker-hardcore/model_score_{} , episode_{}".format(276,331))
 
@@ -177,7 +177,7 @@ def trymodel(r_train,episode):
                 
 def test(r_train,episode):
     result=[]
-    env=gym.make('BipedalWalkerHardcore-v2')
+    env=gym.make('BipedalWalkerHardcore-v3')
     agent_test=DQN_AGENT(env.observation_space.shape[0],36,reply_memory=0,epsilon=0)# 6 is the number of the dicrite action i chose 
     #agent_test.load("rlmodels/BipedalWalker-hardcore/model_score_{} , episode_{}".format(276,331))
 
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     r_train=[]
     log=[]
     stop_training=False
-    env=gym.make('BipedalWalkerHardcore-v2') 
+    env=gym.make('BipedalWalkerHardcore-v3') 
     agent=DQN_AGENT(env.observation_space.shape[0],36,reply_memory=100000,learning_rate=0.0001,epsilon_decay=0.99,epsilon=1)# 6 is the number of the dicrite action i chose
 
 
