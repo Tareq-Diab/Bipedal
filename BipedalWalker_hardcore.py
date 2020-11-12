@@ -1,6 +1,4 @@
 
-
-
 from keras import models , layers , optimizers
 import numpy as np
 import gym
@@ -269,6 +267,12 @@ if __name__ == "__main__":
         pickle.dump(log,outfile)
         pickle.dump(agent.memory,memory)
         outfile.close()
+
+
+
+
+
+
 
 
 
