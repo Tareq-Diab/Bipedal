@@ -8,7 +8,7 @@ import random
 from collections import deque
 from tqdm import tqdm
 import pickle
-
+import tensorflow as tf
 
 
 #data normalization class 
@@ -205,72 +205,72 @@ def test(r_train,episode):
 
 
 if __name__ == "__main__":
-    
-    #trymodel(285,596) the res 6 normal
-    
-    r_train=[]
-    log=[]
-    stop_training=False
-    env=gym.make('BipedalWalkerHardcore-v3') 
-    agent=DQN_AGENT(env.observation_space.shape[0],36,reply_memory=100000,learning_rate=0.0001,epsilon_decay=0.99,epsilon=1)# 6 is the number of the dicrite action i chose
+    with tf.device("gpu:0"):
+        #trymodel(285,596) the res 6 normal
 
+        r_train=[]
+        log=[]
+        stop_training=False
+        env=gym.make('BipedalWalkerHardcore-v3') 
+        agent=DQN_AGENT(env.observation_space.shape[0],36,reply_memory=100000,learning_rate=0.0001,epsilon_decay=0.99,epsilon=1)# 6 is the number of the dicrite action i chose
 
-    done =False
-    batch_size=64
-    for episode in tqdm(range(7000)):
 
         done =False
-        steps=0
-        s=env.reset()
+        batch_size=64
+        for episode in tqdm(range(7000)):
 
-        er=[]
-        #---------------------------------------------------Testing-------------------------------------------------------
-        if stop_training :
-            x=test(r_train,(episode-1))
-            print("test result {}".format(x))
-            if x > 200:
-                env.close()
-                print("stopped trainiing after score {}".format(np.sum(r_train[episode-1])))
-                break 
-            
-            stop_training = False
-            print("exiting test and turning stop_training back to {}".format(stop_training))
-        #---------------------------------------------------Testing-------------------------------------------------------
+            done =False
+            steps=0
+            s=env.reset()
 
-        while not done :
-            
-            if episode % 20 ==0:
-                env.render()
-            
-            a=agent.take_action(s)
-            n_s,r,done,_=env.step(a)
-            agent.add_to_memory(s,a,r,n_s,done)
-            s=n_s
-            er.append(r)
-            if done:
-                
-                
-                r_train.append(er)
-                print("episode: {} / {}, score: {}, e{}".format(episode, 1000, np.sum(r_train[episode]),agent.epsilon))
-                log.append([episode,r_train[episode]])
-                if np.sum(r_train[episode]) > 100:
-                    agent.save("rlmodels/BipedalWalker-hardcore/model_score_{} , episode_{}".format(int(np.sum(r_train[episode])),episode))
-                if np.sum(r_train[episode]) > 200 :
-                    stop_training =True
-                    print("stopping training because reward = {} at episode {}".format(np.sum(r_train[episode]),episode))
-                break 
-            
-            if len(agent.memory) > batch_size:
-                agent.train(batch_size)
-    
-    outfile=open("rlmodels/BipedalWalker-hardcore/log",'wb')
-    memory=open("rlmodels/BipedalWalker-hardcore/memory",'wb')
+            er=[]
+            #---------------------------------------------------Testing-------------------------------------------------------
+            if stop_training :
+                x=test(r_train,(episode-1))
+                print("test result {}".format(x))
+                if x > 200:
+                    env.close()
+                    print("stopped trainiing after score {}".format(np.sum(r_train[episode-1])))
+                    break 
 
-    pickle.dump(log,outfile)
-    pickle.dump(agent.memory,memory)
-    outfile.close()
+                stop_training = False
+                print("exiting test and turning stop_training back to {}".format(stop_training))
+            #---------------------------------------------------Testing-------------------------------------------------------
 
-    
+            while not done :
+
+                if episode % 20 ==0:
+                    env.render()
+
+                a=agent.take_action(s)
+                n_s,r,done,_=env.step(a)
+                agent.add_to_memory(s,a,r,n_s,done)
+                s=n_s
+                er.append(r)
+                if done:
+
+
+                    r_train.append(er)
+                    print("episode: {} / {}, score: {}, e{}".format(episode, 1000, np.sum(r_train[episode]),agent.epsilon))
+                    log.append([episode,r_train[episode]])
+                    if np.sum(r_train[episode]) > 100:
+                        agent.save("rlmodels/BipedalWalker-hardcore/model_score_{} , episode_{}".format(int(np.sum(r_train[episode])),episode))
+                    if np.sum(r_train[episode]) > 200 :
+                        stop_training =True
+                        print("stopping training because reward = {} at episode {}".format(np.sum(r_train[episode]),episode))
+                    break 
+
+                if len(agent.memory) > batch_size:
+                    agent.train(batch_size)
+
+        outfile=open("rlmodels/BipedalWalker-hardcore/log",'wb')
+        memory=open("rlmodels/BipedalWalker-hardcore/memory",'wb')
+
+        pickle.dump(log,outfile)
+        pickle.dump(agent.memory,memory)
+        outfile.close()
+
+
 
 
 
